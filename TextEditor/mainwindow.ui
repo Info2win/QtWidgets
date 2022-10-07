@@ -18,15 +18,27 @@
     <normaloff>:/icons/images/me.jpeg</normaloff>:/icons/images/me.jpeg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPlainTextEdit" name="plainTextEdit">
+   <widget class="QSplitter" name="splitter">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>320</y>
-      <width>104</width>
-      <height>87</height>
+      <x>40</x>
+      <y>90</y>
+      <width>512</width>
+      <height>192</height>
      </rect>
     </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <widget class="QListWidget" name="listWidget">
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QPlainTextEdit" name="plainTextEdit"/>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

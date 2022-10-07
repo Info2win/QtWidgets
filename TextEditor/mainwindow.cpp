@@ -6,7 +6,7 @@ void MainWindow::newFile()
     ui->plainTextEdit->clear();
     filename.clear();
     isSaved = false;
-    ui->statusbar->showMessage("New File");
+    updateStatusBar(filename);
 }
 
 void MainWindow::openFile()
@@ -27,7 +27,7 @@ void MainWindow::openFile()
         file.close();
 
         isSaved = true;
-        ui->statusbar->showMessage(filename);
+        updateStatusBar(filename);
 }
 
 void MainWindow::saveFile()
@@ -50,7 +50,7 @@ void MainWindow::saveFile()
     file.close();
 
     isSaved = true;
-    ui->statusbar->showMessage(filename);
+    updateStatusBar(filename);
 }
 
 void MainWindow::saveFileAs()
@@ -75,9 +75,17 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setCentralWidget(ui->plainTextEdit);
+    this->setCentralWidget(ui->splitter);
+    setupStatusBar();
     newFile();
     isSaved = true;
+
+    for(int i=0; i<301;i++)
+    {
+        QString item = "Item number: " + QString::number(i);
+        ui->listWidget->addItem(item);
+    }
+
     // File
     connect(ui->actionNew,&QAction::triggered,this,&MainWindow::newFile);
     connect(ui->actionOpen,&QAction::triggered,this,&MainWindow::openFile);
@@ -90,10 +98,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionPaste,&QAction::triggered,ui->plainTextEdit,&QPlainTextEdit::paste);
     connect(ui->actionSelect_All,&QAction::triggered,ui->plainTextEdit,&QPlainTextEdit::selectAll);
     connect(ui->actionSelect_None, &QAction::triggered,this, &MainWindow::selectNone);
-    // Toolbar View
-
-    // Insert
-
 }
 
 MainWindow::~MainWindow()
@@ -101,6 +105,43 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::setupStatusBar()
+{
+    QLabel *lblIcon = new QLabel(this);
+    lblIcon->setPixmap(QPixmap(":/icons/images/new.png"));
+    ui->statusbar->addWidget(lblIcon);
+
+    QLabel *lblStatus = new QLabel(this);
+    lblStatus->setText("Not Saved: ");
+    ui->statusbar->addWidget(lblStatus);
+
+    QLabel *lblFile = new QLabel(this);
+    lblFile->setText("New");
+    ui->statusbar->addWidget(lblFile);
+}
+
+void MainWindow::updateStatusBar(QString message)
+{
+    foreach(QObject* obj,ui->statusbar->children())
+    {
+        qDebug()<< obj;
+    }
+ QLabel *lblIcon = qobject_cast<QLabel*>(ui->statusbar->children().at(1));
+ QLabel *lblStatus = qobject_cast<QLabel*> (ui->statusbar->children().at(2));
+ QLabel *lblFile = qobject_cast<QLabel*>(ui->statusbar->children().at(4));
+
+ if(isSaved)
+ {
+     lblIcon->setPixmap(QPixmap(":/icons/images/save.png"));
+     lblStatus->setText("Saved: ");
+ }
+ else
+ {
+     lblIcon->setPixmap(QPixmap(":/icons/images/new.png"));
+     lblStatus->setText("Not Saved:");
+ }
+ lblFile->setText(message);
+}
 
 void MainWindow::on_actionTop_triggered()
 {
@@ -137,4 +178,57 @@ void MainWindow::on_actionMovable_toggled(bool arg1)
     ui->toolBar->setMovable(arg1);
 }
 
+
+
+void MainWindow::on_plainTextEdit_textChanged()
+{
+    isSaved = false;
+    if(filename.isEmpty()) updateStatusBar("New File");
+    else updateStatusBar(filename);
+}
+
+
+void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
+{
+    ui->plainTextEdit->appendPlainText(item->text());
+}
+
+
+
+
+
+void MainWindow::on_actionAnimals_triggered()
+{
+    QStringList options;
+    options << "Dog" << "Cat" << "Bird" << "Fish";
+
+    QScopedPointer<Dialog> dialog(new Dialog());
+    dialog.data()->setList(options);
+    dialog.data()->exec();
+    ui->plainTextEdit->insertPlainText(dialog.data()->getSelected());
+}
+
+
+void MainWindow::on_actionShapes_triggered()
+{
+    QStringList options;
+    options << "Oval" << "Circle" << "Triangle" << "Square";
+
+    QScopedPointer<Dialog> dialog(new Dialog());
+    dialog.data()->setList(options);
+    dialog.data()->exec();
+    ui->plainTextEdit->insertPlainText(dialog.data()->getSelected());
+}
+
+
+void MainWindow::on_actionFood_triggered()
+{
+    QStringList options;
+    options << "Pizza" << "Burger" << "Veggie Pizza" << "Steak";
+
+    QScopedPointer<Dialog> dialog(new Dialog());
+    dialog.data()->setList(options);
+    dialog.data()->exec();
+    ui->plainTextEdit->insertPlainText(dialog.data()->getSelected());
+}
 
