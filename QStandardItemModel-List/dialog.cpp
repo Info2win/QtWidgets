@@ -16,9 +16,9 @@ Dialog::~Dialog()
 
 void Dialog::init()
 {
-   /* QStringList headers;
+    QStringList headers;
     headers << "My Item Label";
-    model.setHorizontalHeaderLabels(headers); */
+    model.setHorizontalHeaderLabels(headers);
 
     QStandardItem *root = model.invisibleRootItem();
 
